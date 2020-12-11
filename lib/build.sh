@@ -152,12 +152,13 @@ install_npm_deps() {
 }
 
 install_yarn_deps() {
-  if [[ "$yarn_version" =~ ^[01]\..* ]]; then
-    yarn install --check-files --cache-folder $cache_dir/yarn-cache --pure-lockfile 2>&1
-  else
-    # Yarn v2.x
+  if [ -d .yarn/releases ]; then
+    # "modern" yarn: 2+
     yarn config set cacheFolder $cache_dir/yarn-cache
     yarn install --immutable 2>&1
+  else
+    # yarn 1.x syntax
+    yarn install --check-files --cache-folder $cache_dir/yarn-cache --pure-lockfile 2>&1
   fi
 }
 
