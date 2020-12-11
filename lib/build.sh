@@ -122,6 +122,11 @@ install_and_cache_deps() {
     mkdir node_modules
     cp -R $cache_dir/node_modules/* node_modules/
   fi
+  if [ -d $cache_dir/yarn-cache ]; then
+    info "Loading yarn-cache from cache"
+    mkdir yarn-cache
+    cp -R $cache_dir/yarn-cache/* yarn-cache/
+  fi
 
   info "Installing node modules"
   if [ -f "$assets_dir/yarn.lock" ]; then
@@ -134,6 +139,7 @@ install_and_cache_deps() {
   cp -R node_modules $cache_dir
 
   PATH=$assets_dir/node_modules/.bin:$PATH
+  cp -R yarn-cache $cache_dir
 
   install_bower_deps
 }
@@ -146,7 +152,13 @@ install_npm_deps() {
 }
 
 install_yarn_deps() {
-  yarn install --check-files --cache-folder $cache_dir/yarn-cache --pure-lockfile 2>&1
+  if [[ "$yarn_version" =~ ^[01]\..* ]]; then
+    yarn install --check-files --cache-folder $cache_dir/yarn-cache --pure-lockfile 2>&1
+  else
+    # Yarn v2.x
+    yarn config set cacheFolder $cache_dir/yarn-cache
+    yarn install --immutable 2>&1
+  fi
 }
 
 install_bower_deps() {
@@ -229,5 +241,7 @@ write_profile() {
 remove_node() {
   info "Removing node and node_modules"
   rm -rf $assets_dir/node_modules
+  info "Removing node and yarn cache"
+  rm -rf $assets_dir/yarn-cache
   rm -rf $heroku_dir/node
 }
