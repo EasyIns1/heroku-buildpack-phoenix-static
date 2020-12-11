@@ -135,11 +135,15 @@ install_and_cache_deps() {
     install_npm_deps
   fi
 
-  info "Caching node modules"
-  cp -R node_modules $cache_dir
-
-  PATH=$assets_dir/node_modules/.bin:$PATH
-  cp -R yarn-cache $cache_dir
+  if [ -d node_modules ]; then
+    info "Caching node modules"
+    cp -R node_modules $cache_dir
+    PATH=$assets_dir/node_modules/.bin:$PATH
+  fi
+  if [ -d yarn-cache ]; then
+    info "Caching yarn cache"
+    cp -R yarn-cache $cache_dir
+  fi
 
   install_bower_deps
 }
