@@ -124,11 +124,6 @@ install_and_cache_deps() {
     info "Clearing node_modules cache"
     rm -rf $cache_dir/node_modules
   fi
-  if [ -d $cache_dir/yarn-cache ]; then
-    info "Loading yarn-cache from cache"
-    mkdir yarn-cache
-    cp -R $cache_dir/yarn-cache/* yarn-cache/
-  fi
 
   info "Installing node modules"
   if [ -f "$assets_dir/yarn.lock" ]; then
@@ -141,13 +136,6 @@ install_and_cache_deps() {
     info "Caching node modules"
     cp -R node_modules $cache_dir
     PATH=$assets_dir/node_modules/.bin:$PATH
-  fi
-  if [ -d yarn-cache ]; then
-    info "Caching yarn cache"
-    # cp got permission errors that failed the deploy when attempting to copy some local packages like phoenix_live_view
-    # cp -R yarn-cache $cache_dir
-    # use fault-tolerant rsync instead:
-    rsync -auvq --delete --ignore-errors --exclude='.git/' yarn-cache/ $cache_dir
   fi
 
   install_bower_deps
