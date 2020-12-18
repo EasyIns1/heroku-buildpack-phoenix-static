@@ -118,9 +118,11 @@ install_and_cache_deps() {
   cd $assets_dir
 
   if [ -d $cache_dir/node_modules ]; then
-    info "Loading node modules from cache"
-    mkdir node_modules
-    cp -R $cache_dir/node_modules/* node_modules/
+    # info "Loading node modules from cache"
+    # mkdir node_modules
+    # cp -R $cache_dir/node_modules/* node_modules/
+    info "Clearing node_modules cache"
+    rm -rf $cache_dir/node_modules
   fi
   if [ -d $cache_dir/yarn-cache ]; then
     info "Loading yarn-cache from cache"
