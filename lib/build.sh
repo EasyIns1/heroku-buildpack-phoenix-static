@@ -145,7 +145,7 @@ install_and_cache_deps() {
     # cp got permission errors that failed the deploy when attempting to copy some local packages like phoenix_live_view
     # cp -R yarn-cache $cache_dir
     # use fault-tolerant rsync instead:
-    rsync -auvq --ignore-errors --exclude='.git/' yarn-cache/ $cache_dir
+    rsync -auvq --delete --ignore-errors --exclude='.git/' yarn-cache/ $cache_dir
   fi
 
   install_bower_deps
@@ -162,7 +162,7 @@ install_yarn_deps() {
   if [ -d .yarn/releases ]; then
     # "modern" yarn: 2+
     yarn config set cacheFolder $cache_dir/yarn-cache
-    yarn install --immutable 2>&1
+    yarn install --immutable --silent 2>&1
   else
     # yarn 1.x syntax
     yarn install --check-files --cache-folder $cache_dir/yarn-cache --pure-lockfile 2>&1
@@ -204,7 +204,7 @@ run_compile() {
     mkdir -p $cache_dir/phoenix-static
     info "Restoring cached assets"
     mkdir -p priv
-    rsync -a -v --ignore-existing $cache_dir/phoenix-static/ priv/static
+    rsync -a -q --ignore-existing $cache_dir/phoenix-static/ priv/static
   fi
 
   cd $assets_dir
@@ -221,7 +221,7 @@ run_compile() {
 
   if [ $has_clean = 0 ]; then
     info "Caching assets"
-    rsync -a --delete -v priv/static/ $cache_dir/phoenix-static
+    rsync -a --delete -q priv/static/ $cache_dir/phoenix-static
   fi
 }
 
