@@ -145,7 +145,7 @@ install_and_cache_deps() {
     # cp got permission errors that failed the deploy when attempting to copy some local packages like phoenix_live_view
     # cp -R yarn-cache $cache_dir
     # use fault-tolerant rsync instead:
-    rsync -auv --delete --ignore-errors --exclude='.git/' yarn-cache $cache_dir
+    rsync -auvq --ignore-errors --exclude='.git/' yarn-cache/ $cache_dir
   fi
 
   install_bower_deps
